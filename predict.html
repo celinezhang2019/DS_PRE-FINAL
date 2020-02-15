@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>deeplizard predict image app</title>
+    <style>
+        * {
+            font-size:30px;
+        }
+    </style>
+</head>
+<body>    
+    <!--
+    <input id="image-selector" type="file">    
+    <button id="predict-button">Predict</button>
+    <p style="font-weight:bold">Predictions</p>    
+    <p>Dog1: <span id="dog-prediction"></span></p>
+    <p>Cat1: <span id="cat-prediction"></span></p>
+    <img id="selected-image" src=""/>
+    -->
+    
+    
+    
+    <input id="pimg" type="file"/><br>11
+    <input type="button" value="upload file(zip)" onclick="file_img()"/>
+    22<span id="file-upload-status"></span>
+    
+    <br><br>
+    <button id="predict-button">Predict</button>
+    
+    <table id="aijquery" border="1" cellpadding="7" cellspacing="0" align="center">
+        <tr>
+            <td><b>No</b></td>
+            <td><b>Image name</b>
+            </td><td><b>Dog</b></td>
+            <td><b>Cat</b></td>
+        </tr>
+    </table>
+       
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script>
+        let base64Image;
+        let prediction_id;
+        $("#image-selector").change(function() {
+            let reader = new FileReader();
+            reader.onload = function(e) {
+                let dataURL = reader.result;
+                $('#selected-image').attr("src", dataURL);
+                base64Image = dataURL.replace("data:image/png;base64,","");
+                console.log(base64Image);
+            }
+            reader.readAsDataURL($("#image-selector")[0].files[0]);
+            $("#dog-prediction").text("");
+            $("#cat-prediction").text("");
+        });
+        
+        $("#predict-button").click(function(){
+            let message = {
+                prediction_id: prediction_id
+            }
+            console.log('#message=' + message);
+            
+            $.post("http://127.0.0.1:5000/dictionary", JSON.stringify(message), function(response){
+                console.log("#response:");
+                console.log(response);
+                
+                for (i = 0; i < response.prediction.length; i++) {
+                    $("#aijquery tr").eq(i).after('<tr><td>'+i+'</td>'
+                                                  +'<td>' + response.prediction[i].fileName +'</td>'
+                                                  +'<td>'+ response.prediction[i].dog.toFixed(6) +'</td>'
+                                                  +'<td>'+ response.prediction[i].cat.toFixed(6) +'</td></tr>');
+                }
+            });
+        });
+        
+        $("#predict-button2").click(function(){
+            let message = {
+                prediction_id: prediction_id
+            }
+            console.log('#message=' + message);
+            
+            $.post("http://127.0.0.1:5000/predict", JSON.stringify(message), function(response){
+                
+                for (i = 0; i < response.prediction.length; i++) {
+                    $("#aijquery tr").eq(i).after('<tr><td>'+i+'</td>'
+                                                  +'<td>new</td>'
+                                                  +'<td>'+ response.prediction[i].dog.toFixed(6) +'</td>'
+                                                  +'<td>'+ response.prediction[i].cat.toFixed(6) +'</td></tr>');
+                }
+                
+                console.log(response);
+            });
+        });  
+        
+        //https://blog.csdn.net/DesYA/article/details/100762264
+        function file_img() {
+            var type = "file";
+            var formData = new FormData();
+            formData.append(type, $("#pimg")[0].files[0]);
+            $.ajax({
+                type: "POST",
+                url: 'http://127.0.0.1:5000/upload',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (data) {
+                    console.log('#file-button');
+                    $("#file-upload-status").text(data.result);
+                    prediction_id = data.prediction_id;
+                    console.log('#prediction_id=' + prediction_id);
+                }
+            });
+        }
+    </script>
+</body>
+</html>

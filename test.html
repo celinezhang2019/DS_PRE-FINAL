@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en">
+<head>
+<title>jquery里操作table相关的各种方法在线演示-aijQuery.cn</title>
+<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+  <style type="text/css">
+    .on {background-color:#ddd}
+  </style>
+</head>
+<body style="text-align:center"><div class="m-1"></div>
+  <h3>jquery操作table的各种方法</h3><div class="m-2"></div>
+<table id="aijquery" border="1" cellpadding="7" cellspacing="0" align="center">
+    <tr><td>测试1.1</td><td>测试1.2</td><td>测试1.3</td><td>测试1.4</td><td>测试1.5</td><td>测试1.6</td></tr>
+    <tr><td>测试2.1</td><td>测试2.2</td><td>测试2.3</td><td>测试2.4</td><td>测试2.5</td><td>测试2.6</td></tr>
+    <tr><td>测试3.1</td><td>测试3.2</td><td>测试3.3</td><td>测试3.4</td><td>测试3.5</td><td>测试3.6</td></tr>
+    <tr><td>测试4.1</td><td>测试4.2</td><td>测试4.3</td><td>测试4.4</td><td>测试4.5</td><td>测试4.6</td></tr>
+    <tr><td>测试5.1</td><td>测试5.2</td><td>测试5.3</td><td>测试5.4</td><td>测试5.5</td><td>测试5.6</td></tr>
+</table><div class="m-2"></div>
+  <button id="huanse">鼠标经过时换色</button> <button id="jiou">奇偶行不同颜色</button> <button id="addtr">插入一行</button> <button id="addtd">插入一列</button><div class="m-1"></div>
+  <button id="hidetr">隐藏/显示第三行</button>
+  <button id="hidetd">隐藏/显示第三列</button>
+  <div class="m-1"></div>
+  <button id="deltr">删除第四行</button>
+  <button id="deltd">删除第五列</button>
+  <button id="deltrt">删除第二行外所有行</button>
+  <button id="deltrd">删除第2到第4行</button>
+  <div class="m-1"></div>
+  <button id="deltrs">只留前三行</button>
+  <button id="deltrf">只留第二到第四行</button>
+  <div class="m-1"></div>
+  <button id="readtd">读取第三行第四列的值</button>
+  <button id="readtdt">读取第三列所有值</button>
+  <button id="readtr">读取第三行所有值</button>
+<script language="javascript">
+//鼠标经过换色
+$("#huanse").on("click",function(){
+    $("#aijquery tr").hover(function(){$(this).children("td").addClass("on");},function(){$(this).children("td").removeClass("on")});
+});
+//奇偶行不同颜色
+$("#jiou").on("click",function(){
+    //偶数行 奇数行的话 odd改为even
+    $("#aijquery tr:odd").find("td").css("background-color","#e7ffff");
+});
+//插入一行
+$("#addtr").on("click",function(){
+    //在表格的末尾添加一行
+    //$("#aijquery").append('<tr><td>new</td><td>new</td><td>new</td><td>new</td><td>new</td><td>new</td></tr>');
+    //在表格的开头添加一行
+    //$("#aijquery").prepend('<tr><td>new</td><td>new</td><td>new</td><td>new</td><td>new</td><td>new</td></tr>');
+     //在表格的第二行后面插入一行
+      $("#aijquery tr").eq(1).after('<tr><td>new</td><td>new</td><td>new</td><td>new</td><td>new</td><td>new</td></tr>');
+});
+//插入一列
+$("#addtd").on("click",function(){
+   //在表格的末尾添加一列
+   //$("#aijquery tr").append('<td>newTD</td>');
+   //在表格的开头添加一列
+   //$("#aijquery tr").prepend('<td>newTD</td>');
+   //在表格的第二列后添加一列
+   $("#aijquery tr td:nth-child(2)").after('<td>newTD</td>');
+});
+//隐藏/显示第三行
+$("#hidetr").on("click",function(){
+    $("#aijquery tr").eq(2).toggle();
+});
+//隐藏/显示第三列
+$("#hidetd").on("click",function(){
+    //第一种方法
+    //$("#aijquery tr td:nth-child(3)").toggle();
+    //第二种方法
+    $("#aijquery tr").each(function(){
+        //$(this).find("td").eq(2).toggle();
+        $("td",$(this)).eq(2).toggle();
+    });
+});
+//删除第四行
+$("#deltr").on("click",function(){
+    $("#aijquery tr").eq(3).remove();
+});
+//删除第五列
+$("#deltd").on("click",function(){
+    $("#aijquery tr td:nth-child(5)").remove();
+});
+//删除第二行外所有行
+$("#deltrt").on("click",function(){
+    $("#aijquery tr:not(:eq(1))").remove();
+});
+//只留前三行
+$("#deltrs").on("click",function(){
+    $("#aijquery tr:gt(2)").remove();
+});
+//删除第2到第4行
+$("#deltrd").on("click",function(){
+    $("#aijquery tr").slice(1,4).remove();
+});
+//只留第二到第四行
+$("#deltrf").on("click",function(){
+    $("#aijquery tr").not($("#aijquery tr").slice(1,4)).remove();
+});
+//读取第三行第四列的值
+$("#readtd").on("click",function(){
+    var v=$("#aijquery tr:eq(2) td:eq(3)").html();
+      alert(v);
+});
+//读取第三列所有值
+$("#readtdt").on("click",function(){
+      var arr=[];
+    $("#aijquery tr").each(function(){
+        arr.push($(this).find("td").eq(2).html());
+    });
+      alert(arr.join(","));
+});
+//读取第三行所有值
+$("#readtr").on("click",function(){
+      var arr=[];
+    $("#aijquery tr:eq(2) td").each(function(){
+        arr.push($(this).html());
+    });
+      alert(arr.join(","));
+});
+</script>
+</body>
+</html>
+
+测试代码
